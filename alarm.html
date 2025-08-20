@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finger Tips - Alarm</title>
+  <link rel="icon" href="/img/logo.png">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      overflow-x: hidden;
+    }
+
+    /* Navbar */
+    nav {
+      background: #0077cc;
+      color: white;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+    }
+    nav button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      margin-right: 15px;
+    }
+    nav h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    /* Side Menu */
+    #sideMenu {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: #005fa3;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      transition: 0.3s;
+      z-index: 1000;
+    }
+    #sideMenu .menu-header {
+      background: #004d82;
+      padding: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      border-bottom: 1px solid #00365d;
+    }
+    #sideMenu a {
+      padding: 15px 20px;
+      text-decoration: none;
+      color: white;
+      border-bottom: 1px solid #004d82;
+    }
+    #sideMenu a:hover {
+      background: #004d82;
+    }
+
+    /* Overlay */
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      z-index: 900;
+    }
+
+    /* Content */
+    .container {
+      padding: 15px;
+    }
+    section {
+      margin-bottom: 25px;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    section h2 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #0077cc;
+    }
+
+    /* Alarm Input */
+    #alarmTime {
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #0077cc;
+      border-radius: 8px;
+      outline: none;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #0077cc;
+      color: white;
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+
+    /* Alarm List */
+    #alarmList {
+      margin-top: 15px;
+      list-style: none;
+      padding: 0;
+    }
+    #alarmList li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f0f7ff;
+      padding: 12px 15px;
+      border-radius: 10px;
+      margin: 8px 0;
+      font-size: 16px;
+      color: #333;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .delete-btn {
+      background: #ff4d4d;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .delete-btn:hover {
+      background: #cc0000;
+    }
+  </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <button onclick="openMenu()">☰</button>
+    <h1>Finger Tips</h1>
+  </nav>
+
+  <!-- Side Menu -->
+  <div id="sideMenu">
+    <div class="menu-header">Menu</div>
+    <a href="index.html" onclick="closeMenu()">Home</a>
+    <a href="switches.html" onclick="closeMenu()">Switches</a>
+    <a href="alarm.html" onclick="closeMenu()">Alarm</a>
+    <a href="javascript:void(0)" onclick="closeMenu()">✖ Close</a>
+  </div>
+
+  <!-- Overlay -->
+  <div id="overlay" onclick="closeMenu()"></div>
+
+  <!-- Content -->
+  <div class="container">
+    <section id="alarmSection">
+      <h2>Set Alarm</h2>
+      <input type="time" id="alarmTime">
+      <button onclick="setAlarm()">Save Alarm</button>
+
+      <h3>Saved Alarms</h3>
+      <ul id="alarmList"></ul>
+    </section>
+  </div>
+
+  <script>
+    // Menu Controls
+    function openMenu() {
+      document.getElementById("sideMenu").style.left = "0";
+      document.getElementById("overlay").style.display = "block";
+    }
+    function closeMenu() {
+      document.getElementById("sideMenu").style.left = "-250px";
+      document.getElementById("overlay").style.display = "none";
+    }
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDJhp2g084naOWL7Wd_--O7eESeBUQ6hPU",
+      authDomain: "stm8-e8076.firebaseapp.com",
+      databaseURL: "https://stm8-e8076-default-rtdb.firebaseio.com",
+      projectId: "stm8-e8076",
+      storageBucket: "stm8-e8076.firebasestorage.app",
+      messagingSenderId: "746974088603",
+      appId: "1:746974088603:web:57da114278bca62d98e53e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Convert 24h -> 12h format
+    function formatTo12Hour(time) {
+      const [hour, minute] = time.split(":");
+      let h = parseInt(hour);
+      const ampm = h >= 12 ? "PM" : "AM";
+      h = h % 12 || 12;
+      return `${h}:${minute} ${ampm}`;
+    }
+
+    // Save Alarm
+    function setAlarm() {
+      const time = document.getElementById("alarmTime").value;
+      if (!time) return alert("Please select a time");
+
+      const formattedTime = formatTo12Hour(time);
+
+      db.ref().once("value").then(snapshot => {
+        const data = snapshot.val() || {};
+        let i = 1;
+        while (data["alarm" + i]) i++;
+        const alarmKey = "alarm" + i;
+        db.ref(alarmKey).set(formattedTime);
+      });
+
+      document.getElementById("alarmTime").value = "";
+    }
+
+    // Display Alarms
+    const alarmList = document.getElementById("alarmList");
+    db.ref().on("value", (snapshot) => {
+      alarmList.innerHTML = "";
+      const data = snapshot.val();
+      if (data) {
+        Object.keys(data).forEach(key => {
+          if (key.startsWith("alarm")) {
+            const li = document.createElement("li");
+            li.textContent = `${key.toUpperCase()}: ${data[key]}`;
+
+            const btn = document.createElement("button");
+            btn.textContent = "Delete";
+            btn.classList.add("delete-btn");
+            btn.onclick = () => db.ref(key).remove();
+
+            li.appendChild(btn);
+            alarmList.appendChild(li);
+          }
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>
