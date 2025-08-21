@@ -2,241 +2,242 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finger Tips</title>
-    <link rel="icon" href="/img/logo.png">
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finger Tips</title>
+  <link rel="icon" href="/img/logo.png">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            overflow-x: hidden;
-        }
 
-        /* Navbar */
-        nav {
-            background: #0077cc;
-            color: white;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-        }
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      overflow-x: hidden;
+    }
 
-        nav button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            margin-right: 15px;
-        }
+    /* Navbar */
+    nav {
+      background: #0077cc;
+      color: white;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+    }
 
-        nav h1 {
-            font-size: 20px;
-            margin: 0;
-        }
+    nav button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      margin-right: 15px;
+    }
 
-        /* Side Menu */
-        #sideMenu {
-            position: fixed;
-            top: 0;
-            left: -250px;
-            /* hidden by default */
-            width: 250px;
-            height: 100%;
-            background: #005fa3;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            transition: 0.3s;
-            z-index: 1000;
-        }
+    nav h1 {
+      font-size: 20px;
+      margin: 0;
+    }
 
-        /* Menu Header */
-        #sideMenu .menu-header {
-            background: #004d82;
-            padding: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            border-bottom: 1px solid #00365d;
-        }
+    /* Side Menu */
+    #sideMenu {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: #005fa3;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      transition: 0.3s;
+      z-index: 1000;
+    }
 
-        #sideMenu a {
-            padding: 15px 20px;
-            text-decoration: none;
-            color: white;
-            border-bottom: 1px solid #004d82;
-        }
+    #sideMenu .menu-header {
+      background: #004d82;
+      padding: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      border-bottom: 1px solid #00365d;
+    }
 
-        #sideMenu a:hover {
-            background: #004d82;
-        }
+    #sideMenu a {
+      padding: 15px 20px;
+      text-decoration: none;
+      color: white;
+      border-bottom: 1px solid #004d82;
+    }
 
-        /* Overlay */
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            display: none;
-            z-index: 900;
-        }
+    #sideMenu a:hover {
+      background: #004d82;
+    }
 
-        /* Content */
-        .container {
-            padding: 15px;
-        }
+    /* Overlay */
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      z-index: 900;
+    }
 
-        section {
-            margin-bottom: 25px;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+    /* Content */
+    .container {
+      padding: 15px;
+    }
 
-        section h2 {
-            margin-top: 0;
-            font-size: 18px;
-            color: #333;
-        }
+    section {
+      margin-bottom: 25px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-        /* Switch Grid (2 in a row for mobile) */
-        .switch-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
+    section h2 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #333;
+    }
 
-        /* Toggle Switch Style */
-        .switch {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
+    /* Switch Grid */
+    .switch-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
 
-        .switch-label {
-            font-size: 14px;
-            font-weight: bold;
-            color: #333;
-        }
+    .switch {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 
-        .toggle {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 26px;
-        }
+    .switch-label {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
 
-        .toggle input {
-            display: none;
-        }
+    /* Toggle Switch */
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
 
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 26px;
-        }
+    .toggle input {
+      display: none;
+    }
 
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 26px;
+    }
 
-        input:checked+.slider {
-            background-color: #0077cc;
-        }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
 
-        input:checked+.slider:before {
-            transform: translateX(24px);
-        }
-    </style>
+    input:checked + .slider {
+      background-color: #0077cc;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+  </style>
 </head>
 
 <body>
 
-    <!-- Navbar -->
-    <nav>
-        <button onclick="openMenu()">☰</button>
-        <h1>Finger Tips</h1>
-    </nav>
+  <!-- Navbar -->
+  <nav>
+    <button onclick="openMenu()">☰</button>
+    <h1>Finger Tips</h1>
+  </nav>
 
-    <!-- Side Menu -->
-    <div id="sideMenu">
-        <div class="menu-header">Menu</div>
-        <a href="index.html" onclick="closeMenu()">Home</a>
-        <a href="switches.html" onclick="closeMenu()">Switches</a>
-        <a href="alarm.html" onclick="closeMenu()">Alarm</a>
-        <a href="javascript:void(0)" onclick="closeMenu()">✖ Close</a>
-    </div>
+  <!-- Side Menu -->
+  <div id="sideMenu">
+    <div class="menu-header">Menu</div>
+    <a href="index.html" onclick="closeMenu()">Home</a>
+    <a href="switches.html" onclick="closeMenu()">Switches</a>
+    <a href="alarm.html" onclick="closeMenu()">Alarm</a>
+    <a href="javascript:void(0)" onclick="closeMenu()">✖ Close</a>
+  </div>
 
-    <!-- Overlay -->
-    <div id="overlay" onclick="closeMenu()"></div>
+  <!-- Overlay -->
+  <div id="overlay" onclick="closeMenu()"></div>
 
-    <!-- Content -->
-    <div class="container">
-        <section id="room-switches">
-            <h2>Room Switches</h2>
-            <div class="switch-grid">
-                <div class="switch">
-                    <span class="switch-label">Fan</span>
-                    <label class="toggle">
-                        <input type="checkbox" id="switch1">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+  <!-- Content -->
+  <div class="container">
+    <section id="room-switches">
+      <h2>Room Switches</h2>
+      <div class="switch-grid">
+        <div class="switch">
+          <span class="switch-label">Fan</span>
+          <label class="toggle">
+            <input type="checkbox" id="switch1">
+            <span class="slider"></span>
+          </label>
+        </div>
 
-                <div class="switch">
-                    <span class="switch-label">Light 1</span>
-                    <label class="toggle">
-                        <input type="checkbox" id="switch2">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+        <div class="switch">
+          <span class="switch-label">Light 1</span>
+          <label class="toggle">
+            <input type="checkbox" id="switch2">
+            <span class="slider"></span>
+          </label>
+        </div>
 
-                <div class="switch">
-                    <span class="switch-label">Light 2</span>
-                    <label class="toggle">
-                        <input type="checkbox" id="switch3">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+        <div class="switch">
+          <span class="switch-label">Light 2</span>
+          <label class="toggle">
+            <input type="checkbox" id="switch3">
+            <span class="slider"></span>
+          </label>
+        </div>
 
-                <div class="switch">
-                    <span class="switch-label">AC</span>
-                    <label class="toggle">
-                        <input type="checkbox" id="switch4">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-        </section>
-    </div>
+        <div class="switch">
+          <span class="switch-label">AC</span>
+          <label class="toggle">
+            <input type="checkbox" id="switch4">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </section>
+  </div>
 
-
-    <div class="container">
+  <div class="container">
         <!-- Switches Section -->
         <section id="switches">
             <h2>Hall Switches</h2>
@@ -330,56 +331,49 @@
             </div>
         </section>
     </div>
-    <script>
-        function openMenu() {
-            document.getElementById("sideMenu").style.left = "0";
-            document.getElementById("overlay").style.display = "block";
-        }
 
-        function closeMenu() {
-            document.getElementById("sideMenu").style.left = "-250px";
-            document.getElementById("overlay").style.display = "none";
-        }
+  <script>
+    function openMenu() {
+      document.getElementById("sideMenu").style.left = "0";
+      document.getElementById("overlay").style.display = "block";
+    }
 
-        // 🔹 Your Firebase Config
+    function closeMenu() {
+      document.getElementById("sideMenu").style.left = "-250px";
+      document.getElementById("overlay").style.display = "none";
+    }
+
+    // Firebase Config
     const firebaseConfig = {
-  apiKey: "AIzaSyDJhp2g084naOWL7Wd_--O7eESeBUQ6hPU",
-  authDomain: "stm8-e8076.firebaseapp.com",
-  databaseURL: "https://stm8-e8076-default-rtdb.firebaseio.com",
-  projectId: "stm8-e8076",
-  storageBucket: "stm8-e8076.firebasestorage.app",
-  messagingSenderId: "746974088603",
-  appId: "1:746974088603:web:57da114278bca62d98e53e"
-};
-
+      apiKey: "AIzaSyBiZt43gvXjmboRVvqefDjKUqOLD4MbNk0",
+      authDomain: "stm8-e00bc.firebaseapp.com",
+      databaseURL: "https://stm8-e00bc-default-rtdb.firebaseio.com",
+      projectId: "stm8-e00bc",
+      storageBucket: "stm8-e00bc.firebasestorage.app",
+      messagingSenderId: "589905063903",
+      appId: "1:589905063903:web:656b6a130e4772c6771e6a"
+    };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Function to sync switches with DB
-    function syncSwitch(switchId, dbKey) {
-      const checkbox = document.getElementById(switchId);
-      const ref = db.ref(dbKey);
+    // Mapping for each switch ON/OFF
+    const switchMapping = {
+      switch1: { on: 1, off: 0 },
+      switch2: { on: 2, off: 3 },
+      switch3: { on: 4, off: 5 },
+      switch4: { on: 6, off: 7 }
+    };
 
-      // 🔹 Listen for value changes in DB
-      ref.on("value", (snapshot) => {
-        const value = snapshot.val();
-        checkbox.checked = value === 1; // ON if 1
+    // Attach listeners
+    Object.keys(switchMapping).forEach(id => {
+      document.getElementById(id).addEventListener("change", function () {
+        const value = this.checked ? switchMapping[id].on : switchMapping[id].off;
+        db.ref("data").set(value)
+          .then(() => console.log(`Sent to Firebase: ${id} = ${value}`))
+          .catch((error) => console.error("Firebase Error:", error));
       });
-
-      // 🔹 Update DB when user toggles
-      checkbox.addEventListener("change", () => {
-        ref.set(checkbox.checked ? 1 : 0);
-      });
-    }
-
-    // 🔹 Sync all switches
-    syncSwitch("switch1", "switch1");
-    syncSwitch("switch2", "switch2");
-    syncSwitch("switch3", "switch3");
-    syncSwitch("switch4", "switch4");
-    </script>
-
+    });
+  </script>
 </body>
-
 </html>
