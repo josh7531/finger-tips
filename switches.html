@@ -357,23 +357,18 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Mapping for each switch ON/OFF
-    const switchMapping = {
-      switch1: { on: 1, off: 0 },
-      switch2: { on: 3, off: 2 },
-      switch3: { on: 5, off: 4 },
-      switch4: { on: 7, off: 6 }
-    };
+    // Attach listeners for each switch
+["switch1", "switch2", "switch3", "switch4"].forEach(id => {
+  document.getElementById(id).addEventListener("change", function () {
+    const value = this.checked ? 1 : 0;
 
-    // Attach listeners
-    Object.keys(switchMapping).forEach(id => {
-      document.getElementById(id).addEventListener("change", function () {
-        const value = this.checked ? switchMapping[id].on : switchMapping[id].off;
-        db.ref("data").set(value)
-          .then(() => console.log(`Sent to Firebase: ${id} = ${value}`))
-          .catch((error) => console.error("Firebase Error:", error));
-      });
-    });
+    // Update only the specific switch in Firebase
+    db.ref("/" + id).set(value)
+      .then(() => console.log(`Updated Firebase: ${id} = ${value}`))
+      .catch((error) => console.error("Firebase Error:", error));
+  });
+});
+
   </script>
 </body>
 </html>
