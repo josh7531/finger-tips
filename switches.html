@@ -334,56 +334,64 @@
 
   <script>
     function openMenu() {
-      document.getElementById("sideMenu").style.left = "0";
-      document.getElementById("overlay").style.display = "block";
-    }
-
-    function closeMenu() {
-      document.getElementById("sideMenu").style.left = "-250px";
-      document.getElementById("overlay").style.display = "none";
-    }
-
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyBiZt43gvXjmboRVvqefDjKUqOLD4MbNk0",
-      authDomain: "stm8-e00bc.firebaseapp.com",
-      databaseURL: "https://stm8-e00bc-default-rtdb.firebaseio.com",
-      projectId: "stm8-e00bc",
-      storageBucket: "stm8-e00bc.firebasestorage.app",
-      messagingSenderId: "589905063903",
-      appId: "1:589905063903:web:656b6a130e4772c6771e6a"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-// Switch IDs
-const switchIds = ["switch1", "switch2", "switch3", "switch4"];
-
-// --- 1. Listen to user toggles and update Firebase ---
-switchIds.forEach(id => {
-  document.getElementById(id).addEventListener("change", function () {
-    const value = this.checked ? 1 : 0;
-
-    // Update only this switch in Firebase
-    db.ref("/" + id).set(value)
-      .then(() => console.log(`Updated Firebase: ${id} = ${value}`))
-      .catch((error) => console.error("Firebase Error:", error));
-  });
-});
-
-// --- 2. Listen to Firebase changes and update switches ---
-db.ref("/").on("value", (snapshot) => {
-  const data = snapshot.val();
-  if (data) {
-    switchIds.forEach(id => {
-      if (data.hasOwnProperty(id)) {
-        document.getElementById(id).checked = data[id] === 1;
-      }
-    });
+    document.getElementById("sideMenu").style.left = "0";
+    document.getElementById("overlay").style.display = "block";
   }
-});
 
+  function closeMenu() {
+    document.getElementById("sideMenu").style.left = "-250px";
+    document.getElementById("overlay").style.display = "none";
+  }
+
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBiZt43gvXjmboRVvqefDjKUqOLD4MbNk0",
+    authDomain: "stm8-e00bc.firebaseapp.com",
+    databaseURL: "https://stm8-e00bc-default-rtdb.firebaseio.com",
+    projectId: "stm8-e00bc",
+    storageBucket: "stm8-e00bc.firebasestorage.app",
+    messagingSenderId: "589905063903",
+    appId: "1:589905063903:web:656b6a130e4772c6771e6a"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // Switch IDs
+  const switchIds = ["switch1", "switch2", "switch3", "switch4"];
+
+  // Map for relay values
+  const relayMap = {
+    switch1: { off: 0, on: 1 },
+    switch2: { off: 2, on: 3 },
+    switch3: { off: 4, on: 5 },
+    switch4: { off: 6, on: 7 }
+  };
+
+  // --- 1. Listen to user toggles and update Firebase ---
+  switchIds.forEach(id => {
+    document.getElementById(id).addEventListener("change", function () {
+      const relayValue = this.checked ? relayMap[id].on : relayMap[id].off;
+
+      // Update relay key in Firebase
+      db.ref("/relay").set(relayValue)
+        .then(() => console.log(`Updated Firebase: relay = ${relayValue}`))
+        .catch((error) => console.error("Firebase Error:", error));
+    });
+  });
+
+  // --- 2. Listen to Firebase changes and update switches ---
+  db.ref("/relay").on("value", (snapshot) => {
+    const relayValue = snapshot.val();
+
+    if (relayValue !== null) {
+      switchIds.forEach(id => {
+        if (relayMap[id].off === relayValue || relayMap[id].on === relayValue) {
+          document.getElementById(id).checked = relayValue % 2 === 1; // odd = ON, even = OFF
+        }
+      });
+    }
+  });
 
   </script>
 </body>
